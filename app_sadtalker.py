@@ -22,7 +22,8 @@ def ref_video_fn(path_of_ref_video):
     else:
         return gr.update(value=False)
 
-def sadtalker_demo(checkpoint_path='checkpoints', config_path='src/config', warpfn=None):
+model_path='/root/autodl-tmp/model/sadtalker'
+def sadtalker_demo(checkpoint_path=model_path, config_path='src/config', warpfn=None):
 
     sad_talker = SadTalker(checkpoint_path, config_path, lazy_load=True)
 
@@ -44,8 +45,10 @@ def sadtalker_demo(checkpoint_path='checkpoints', config_path='src/config', warp
                         with gr.Column(variant='panel'):
                             driven_audio = gr.Audio(label="Input audio", source="upload", type="filepath")
 
+                        print(f'-----sys.platform={sys.platform},in_webui={in_webui}------')
                         if sys.platform != 'win32' and not in_webui: 
                             from src.utils.text2speech import TTSTalker
+                            
                             tts_talker = TTSTalker()
                             with gr.Column(variant='panel'):
                                 input_text = gr.Textbox(label="Generating audio from text", lines=5, placeholder="please enter some text here, we genreate the audio from text using @Coqui.ai TTS.")
@@ -106,6 +109,6 @@ if __name__ == "__main__":
 
     demo = sadtalker_demo()
     demo.queue()
-    demo.launch()
+    demo.launch(share=True, inbrowser=True, server_name='0.0.0.0', server_port = 6006)
 
 
